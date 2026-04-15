@@ -60,3 +60,14 @@ func TestVersionPair_Fields(t *testing.T) {
 		t.Errorf("unexpected VersionPair fields: %+v", vp)
 	}
 }
+
+// TestSameMount_OneEmpty verifies that an empty path and a non-empty path
+// are not considered the same mount.
+func TestSameMount_OneEmpty(t *testing.T) {
+	if SameMount("", "secret/app/prod") {
+		t.Error("expected different mount for empty path vs 'secret/app/prod'")
+	}
+	if SameMount("secret/app/prod", "") {
+		t.Error("expected different mount for 'secret/app/prod' vs empty path")
+	}
+}
