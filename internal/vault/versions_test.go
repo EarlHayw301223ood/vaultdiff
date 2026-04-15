@@ -60,6 +60,20 @@ func TestListVersions_NilSecret(t *testing.T) {
 	}
 }
 
+func TestListVersions_EmptyVersions(t *testing.T) {
+	c := &Client{logical: &mockLogical{readFn: func(_ string) (*vaultapi.Secret, error) {
+		return makeVersionsSecret(map[string]interface{}{}), nil
+	}}}
+
+	versions, err := c.ListVersions(context.Background(), "secret", "myapp/empty")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(versions) != 0 {
+		t.Errorf("expected 0 versions, got %d", len(versions))
+	}
+}
+
 func TestLatestVersion_ReturnsHighest(t *testing.T) {
 	raw := map[string]interface{}{
 		"1": map[string]interface{}{"created_time": "2024-01-01T00:00:00Z", "deletion_time": "", "destroyed": false},
