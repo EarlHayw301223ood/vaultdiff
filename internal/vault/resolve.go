@@ -54,3 +54,19 @@ func (r VersionRef) String() string {
 	}
 	return fmt.Sprintf("%s@%d", r.Path, r.Version)
 }
+
+// Equal reports whether two VersionRefs refer to the same path and version.
+// Two refs are equal if they have the same path and both are latest, or both
+// specify the same explicit version number.
+func (r VersionRef) Equal(other VersionRef) bool {
+	if r.Path != other.Path {
+		return false
+	}
+	if r.IsLatest != other.IsLatest {
+		return false
+	}
+	if !r.IsLatest && r.Version != other.Version {
+		return false
+	}
+	return true
+}
