@@ -82,3 +82,10 @@ func TestClone_WritesWhenOverwriteEnabled(t *testing.T) {
 		t.Error("expected write to be called")
 	}
 }
+
+func TestClone_SameSourceAndDest(t *testing.T) {
+	_, err := Clone(nil, "secret/same", "secret/same", "latest", CloneOptions{})
+	if err == nil {
+		t.Fatal("expected error when sourcePath and destPath are identical")
+	}
+}
