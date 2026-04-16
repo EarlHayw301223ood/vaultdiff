@@ -53,6 +53,14 @@ func Export(r Report, opts ExportOptions) error {
 		w = f
 	}
 
+	if err := write(r, w, opts); err != nil {
+		return err
+	}
+	return nil
+}
+
+// write dispatches to the appropriate serialisation method based on opts.Format.
+func write(r Report, w io.Writer, opts ExportOptions) error {
 	switch opts.Format {
 	case FormatJSON:
 		return r.WriteJSON(w)
