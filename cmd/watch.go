@@ -31,6 +31,10 @@ func init() {
 func runWatch(cmd *cobra.Command, args []string) error {
 	path := args[0]
 
+	if watchInterval <= 0 {
+		return fmt.Errorf("interval must be a positive number of seconds, got %d", watchInterval)
+	}
+
 	cfg, err := vault.ConfigFromEnv()
 	if err != nil {
 		return fmt.Errorf("vault config: %w", err)
