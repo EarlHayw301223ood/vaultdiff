@@ -66,6 +66,29 @@ func TestWatch_EmitsEventOnVersionChange(t *testing.T) {
 	}
 }
 
+func TestWatch_NoEventWhenVersionUnchanged(t *testing.T) {
+	v1 := makeVersionsSecret(map[string]int{"1": 1})
+	client := &stubVersionClient{
+		responses: []*api.Secret{v1, v1, v1},
+	}
+
+	w := NewWatcher(client, "secret/data/foo", 10*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+
+	ch, err := w.Watch(ctx)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	select {
+	case evt := <-ch:
+		t.Errorf("unexpected event received: %+v", evt)
+	case <-ctx.Done():
+		// expected: no event emitted when version does not change
+	}
+}
+
 func TestWatch_ClosesChannelOnCancel(t *testing.T) {
 	v1 := makeVersionsSecret(map[string]int{"1": 1})
 	client := &stubVersionClient{responses: []*api.Secret{v1}}
