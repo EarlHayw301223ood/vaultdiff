@@ -42,6 +42,20 @@ func init() {
 	rootCmd.AddCommand(lockCmd)
 }
 
+// resolveOwner returns the provided owner string, falling back to the system
+// hostname if owner is empty. An error is returned only if hostname lookup
+// fails and no owner was supplied.
+func resolveOwner(owner string) (string, error) {
+	if owner != "" {
+		return owner, nil
+	}
+	hostname, err := os.Hostname()
+	if err != nil {
+		return "", fmt.Errorf("could not determine lock owner (set --owner explicitly): %w", err)
+	}
+	return hostname, nil
+}
+
 func runAcquireLock(cmd *cobra.Command, args []string) error {
 	cfg, err := vault.ConfigFromEnv()
 	if err != nil {
@@ -52,9 +66,9 @@ func runAcquireLock(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	owner := lockOwner
-	if owner == "" {
-		owner, _ = os.Hostname()
+	owner, err := resolveOwner(lockOwner)
+	if err != nil {
+		return err
 	}
 
 	res, err := vault.AcquireLock(context.Background(), client.Logical(), args[0], vault.LockOptions{
