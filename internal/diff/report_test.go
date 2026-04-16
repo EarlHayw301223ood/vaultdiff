@@ -88,3 +88,14 @@ func TestReport_WriteText_SummaryLine(t *testing.T) {
 		t.Errorf("expected removed count in summary line")
 	}
 }
+
+func TestNewReport_EmptyChanges(t *testing.T) {
+	r := NewReport("dev", "prod", "secret/app", "secret/app", nil)
+
+	if r.Summary.Total != 0 {
+		t.Errorf("expected total 0 for nil changes, got %d", r.Summary.Total)
+	}
+	if r.Changes == nil {
+		t.Errorf("expected Changes to be non-nil slice, got nil")
+	}
+}
