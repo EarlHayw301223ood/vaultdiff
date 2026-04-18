@@ -34,6 +34,13 @@ func TestSetPin_InvalidVersion(t *testing.T) {
 	}
 }
 
+func TestSetPin_NegativeVersion(t *testing.T) {
+	_, err := SetPin(nil, "secret/app", -5)
+	if err == nil || err.Error() != "version must be a positive integer" {
+		t.Errorf("expected invalid version error for negative version, got %v", err)
+	}
+}
+
 func TestGetPin_EmptyPath(t *testing.T) {
 	_, err := GetPin(nil, "")
 	if err == nil || err.Error() != "path must not be empty" {
