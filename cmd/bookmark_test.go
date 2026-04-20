@@ -63,3 +63,11 @@ func TestBookmarkCmd_ShortDescription(t *testing.T) {
 		t.Error("expected non-empty short description for bookmark command")
 	}
 }
+
+func TestBookmarkSubcmds_HaveShortDescriptions(t *testing.T) {
+	for _, c := range bookmarkCmd.Commands() {
+		if c.Short == "" {
+			t.Errorf("expected non-empty short description for subcommand %q", c.Name())
+		}
+	}
+}
