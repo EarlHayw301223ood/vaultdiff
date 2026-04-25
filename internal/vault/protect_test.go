@@ -68,3 +68,14 @@ func TestSetProtection_Writes(t *testing.T) {
 		t.Errorf("unexpected write path: %q", c.writePath)
 	}
 }
+
+func TestClearProtection_Writes(t *testing.T) {
+	c := &mockLogical{}
+	err := ClearProtection(c, "secrets/myapp")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if c.deletePath != "vaultdiff/protect/secrets/myapp" {
+		t.Errorf("unexpected delete path: %q", c.deletePath)
+	}
+}
