@@ -30,6 +30,10 @@ func runGC(cmd *cobra.Command, args []string) error {
 	maxAge, _ := cmd.Flags().GetDuration("max-age")
 	dryRun, _ := cmd.Flags().GetBool("dry-run")
 
+	if keepLast < 1 {
+		return fmt.Errorf("--keep-last must be at least 1")
+	}
+
 	cfg, err := vault.ConfigFromEnv()
 	if err != nil {
 		return fmt.Errorf("vault config: %w", err)
